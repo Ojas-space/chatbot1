@@ -1,4 +1,6 @@
 import { useState, useRef, useEffect } from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import "./App.css";
 
 const OLLAMA_URL = "http://localhost:11434/api/chat";
@@ -13,6 +15,14 @@ function splitContent(content) {
   }));
 }
 
+function MarkdownText({ text }) {
+  return (
+    <div className="markdown">
+      <ReactMarkdown remarkPlugins={[remarkGfm]}>{text}</ReactMarkdown>
+    </div>
+  );
+}
+
 function MessageBubble({ role, content }) {
   const segments = splitContent(content);
   return (
@@ -24,7 +34,7 @@ function MessageBubble({ role, content }) {
               <code>{seg.text.replace(/^[a-zA-Z]*\n/, "")}</code>
             </pre>
           ) : (
-            seg.text && <span key={i}>{seg.text}</span>
+            seg.text && <MarkdownText key={i} text={seg.text} />
           )
         )}
       </div>
