@@ -4,7 +4,9 @@ import remarkGfm from "remark-gfm";
 import "./App.css";
 
 const OLLAMA_URL = "http://localhost:11434/api/chat";
+const OLLAMA_TAGS_URL = "http://localhost:11434/api/tags";
 const DEFAULT_MODEL = "qwen2.5-coder:7b";
+const FALLBACK_MODELS = ["qwen2.5-coder:7b", "qwen3:14b"];
 
 // Splits a message into alternating plain-text / code segments on ``` fences
 function splitContent(content) {
@@ -44,7 +46,7 @@ function MessageBubble({ role, content }) {
 
 export default function App() {
   const [model, setModel] = useState(DEFAULT_MODEL);
-  const [editingModel, setEditingModel] = useState(false);
+  const [models, setModels] = useState(FALLBACK_MODELS);
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [isStreaming, setIsStreaming] = useState(false);
@@ -55,6 +57,21 @@ export default function App() {
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  useEffect(() => {
+    fetch(OLLAMA_TAGS_URL)
+      .then((res) => (res.ok ? res.json() : Promise.reject()))
+      .then((data) => {
+        const names = data.models?.map((m) => m.name).filter(Boolean) ?? [];
+        if (names.length > 0) {
+          setModels(names);
+          setModel((current) => (names.includes(current) ? current : names[0]));
+        }
+      })
+      .catch(() => {
+        setModels(FALLBACK_MODELS);
+      });
+  }, []);
 
   async function sendMessage() {
     const text = input.trim();
@@ -142,20 +159,19 @@ if (!response.body) {
       <header className="app-header">
         <div className="status-group">
           <span className={`status-dot ${isStreaming ? "pulse" : ""}`} />
-          {editingModel ? (
-            <input
-              className="model-input"
-              value={model}
-              autoFocus
-              onChange={(e) => setModel(e.target.value)}
-              onBlur={() => setEditingModel(false)}
-              onKeyDown={(e) => e.key === "Enter" && setEditingModel(false)}
-            />
-          ) : (
-            <button className="model-label" onClick={() => setEditingModel(true)}>
-              {model}
-            </button>
-          )}
+          <select
+            className="model-select"
+            value={model}
+            onChange={(e) => setModel(e.target.value)}
+            disabled={isStreaming}
+            aria-label="Select model"
+          >
+            {models.map((name) => (
+              <option key={name} value={name}>
+                {name}
+              </option>
+            ))}
+          </select>
           <span className="status-sub">local · 11434</span>
         </div>
         <div className="waveform" aria-hidden="true">

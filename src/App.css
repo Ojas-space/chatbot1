@@ -92,35 +92,43 @@ body {
   }
 }
 
-.model-label {
-  background: transparent;
-  border: none;
+.model-select {
+  appearance: none;
+  background: var(--input-bg);
+  border: 1px solid var(--border-strong);
   color: var(--text);
   font-weight: 600;
-  font-size: 14px;
+  font-size: 13px;
   letter-spacing: -0.01em;
-  cursor: pointer;
-  padding: 6px 10px;
-  border-radius: var(--radius-sm);
-  transition: background 0.15s ease, color 0.15s ease;
-}
-
-.model-label:hover {
-  background: var(--surface-hover);
-  color: var(--accent);
-}
-
-.model-input {
-  background: var(--input-bg);
-  border: 1px solid var(--accent);
-  color: var(--text);
-  font-weight: 500;
-  padding: 6px 10px;
-  border-radius: var(--radius-sm);
-  outline: none;
-  font-size: 14px;
   font-family: "JetBrains Mono", monospace;
+  padding: 7px 32px 7px 12px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23a1a1aa' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  max-width: min(280px, 55vw);
+}
+
+.model-select:hover:not(:disabled) {
+  border-color: rgba(129, 140, 248, 0.4);
+}
+
+.model-select:focus {
+  border-color: rgba(129, 140, 248, 0.5);
   box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.model-select:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.model-select option {
+  background: #18181b;
+  color: var(--text);
 }
 
 .status-sub {
