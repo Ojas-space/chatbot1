@@ -178,7 +178,7 @@ if (!response.body) {
         <textarea
           ref={textareaRef}
           value={input}
-          placeholder="Made by Ojas Chaudhary :)"
+          placeholder="Made by ojas_space :)"
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
           rows={1}
